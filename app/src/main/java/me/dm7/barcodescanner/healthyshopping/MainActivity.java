@@ -90,25 +90,30 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CODE_GETSCANCODE:
                 if (resultCode == Activity.RESULT_OK) {
                     cody = data.getStringExtra("message");
+                    String[] item = cody.split(";");
+                    String ssid = item[0];
+                    String pass = item[1];
+                    String networkSSID = ssid.split(":")[1];
+                    String networkPass = pass.split(":")[1];
                     try {
-                        String[] item = cody.split(";");
-                        String ssid = item[0];
-                        String pass = item[1];
-                        String networkSSID = ssid.split(":")[1];
-                        String networkPass = pass.split(":")[1];
                         WifiConfiguration wifiConfig = new WifiConfiguration();
                         wifiConfig.SSID = String.format("\"%s\"", networkSSID);
                         wifiConfig.preSharedKey = String.format("\"%s\"", networkPass);
 
                         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                         //remember id
+                        /* if (networkId != -1) {
+                            // success, can call wfMgr.enableNetwork(networkId, true) to connect
+                        }*/
                         int netId = wifiManager.addNetwork(wifiConfig);
                         wifiManager.disconnect();
                         wifiManager.enableNetwork(netId, true);
                         wifiManager.reconnect();
                         //textView.setText(cody);
+                        Toast.makeText(this, "Połączono z: " + networkSSID, Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         e.printStackTrace();
+                        Toast.makeText(this, "Nie można połączyć z: " + networkSSID, Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -242,8 +247,10 @@ public class MainActivity extends AppCompatActivity {
                         wifiManager.disconnect();
                         wifiManager.enableNetwork(netId, true);
                         wifiManager.reconnect();
+                        Toast.makeText(MainActivity.this, "Połączono z: " + wifi, Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         e.printStackTrace();
+                        Toast.makeText(MainActivity.this, "Nie można połączyć z: " + wifi, Toast.LENGTH_SHORT).show();
                     }
 
                 }
