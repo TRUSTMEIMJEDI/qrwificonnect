@@ -70,14 +70,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                try {
-                    detectWifi();
-                    Snackbar.make(view, "Skanuje WiFi ...", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                detectWifi();
+                Snackbar.make(view, "Skanuje WiFi ...", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
     }
@@ -166,7 +161,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void detectWifi() {
         this.wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        this.wifiManager.startScan();
+        try {
+            this.wifiManager.startScan();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+
         this.wifiList = this.wifiManager.getScanResults();
 
         Toast.makeText(this, "Liczba znalezionych WiFi: " + wifiList.size(), Toast.LENGTH_SHORT).show();
