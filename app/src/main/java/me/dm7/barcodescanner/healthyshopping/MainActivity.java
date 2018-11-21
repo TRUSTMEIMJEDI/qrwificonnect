@@ -161,41 +161,36 @@ public class MainActivity extends AppCompatActivity {
 
     public void detectWifi() {
         this.wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        try {
-            this.wifiManager.startScan();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
+        if(this.wifiManager.startScan()) {
+            this.wifiList = this.wifiManager.getScanResults();
 
-        this.wifiList = this.wifiManager.getScanResults();
+            Toast.makeText(this, "Liczba znalezionych WiFi: " + wifiList.size(), Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(this, "Liczba znalezionych WiFi: " + wifiList.size(), Toast.LENGTH_SHORT).show();
+            this.nets = new Element[wifiList.size()];
+            for (int i = 0; i < wifiList.size(); i++) {
 
-        this.nets = new Element[wifiList.size()];
-        for (int i = 0; i < wifiList.size(); i++) {
+                String item = wifiList.get(i).toString();
+                //Toast.makeText(this, item, Toast.LENGTH_SHORT).show();
 
-            String item = wifiList.get(i).toString();
-            //Toast.makeText(this, item, Toast.LENGTH_SHORT).show();
+                String[] mang_item = item.split(",");
+                String item_ssid = mang_item[0];
+                String ssid = item_ssid.split(": ")[1];
 
-            String[] mang_item = item.split(",");
-            String item_ssid = mang_item[0];
-            String ssid = item_ssid.split(": ")[1];
-
-            nets[i] = new Element(ssid);
-        }
-
-        AdapterElements adapterElements = new AdapterElements(this);
-        ListView netList = (ListView) findViewById(R.id.lv_ssid);
-        netList.setAdapter(adapterElements);
-        netList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(), nets[i].getTitle() + "", Toast.LENGTH_SHORT).show();
-
-                showdialow(nets[i].getTitle());
+                nets[i] = new Element(ssid);
             }
-        });
 
+            AdapterElements adapterElements = new AdapterElements(this);
+            ListView netList = (ListView) findViewById(R.id.lv_ssid);
+            netList.setAdapter(adapterElements);
+            netList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Toast.makeText(getApplicationContext(), nets[i].getTitle() + "", Toast.LENGTH_SHORT).show();
+
+                    showdialow(nets[i].getTitle());
+                }
+            });
+        }
         //showdialow();
     }
 
@@ -240,6 +235,9 @@ public class MainActivity extends AppCompatActivity {
 
                         //WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
                         //remember id
+                       /* if (networkId != -1) {
+                            // success, can call wfMgr.enableNetwork(networkId, true) to connect
+                        }*/
                         int netId = wifiManager.addNetwork(wifiConfig);
                         wifiManager.disconnect();
                         wifiManager.enableNetwork(netId, true);
