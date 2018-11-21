@@ -1,0 +1,5 @@
+<resources>
+    <string name="simple_scanner_activity">Barcode scanner</string>
+    <string name="app_name">Scan Wifi App</string>
+    <string name="action_settings">Settings</string>
+</resources>
